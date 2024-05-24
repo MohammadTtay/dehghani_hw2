@@ -67,9 +67,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-
+    implementation("androidx.activity:activity-compose:1.4.0-alpha10")
+    implementation("androidx.compose.runtime:runtime-livedata:1.0.5")
+    implementation("androidx.compose.ui:ui:1.0.5")
     implementation("androidx.compose.material:material:1.0.5")
     implementation("androidx.compose.foundation:foundation:1.0.5")
     implementation("com.google.android.material:material:1.4.0")
+    implementation("androidx.work:work-runtime-ktx:2.7.0")
 
 }
