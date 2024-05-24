@@ -6,14 +6,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.Text
-import androidx.compose.ui.tooling.preview.Preview
 import CheckStatusWorker
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import java.util.concurrent.TimeUnit
 import androidx.work.ExistingPeriodicWorkPolicy
+import android.content.Context
+import java.io.File
+import com.google.gson.Gson
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 
 class MainActivity : ComponentActivity() {
     private val powerConnectionReceiver = PowerConnectionReceiver()
@@ -36,8 +40,10 @@ class MainActivity : ComponentActivity() {
             periodicWorkRequest
         )
 
+        // Read and display JSON data
+        val logs = readLogsFromJson(applicationContext)
         setContent {
-            MainContent()
+            DisplayLogs(logs)
         }
     }
 
@@ -45,17 +51,25 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         unregisterReceiver(powerConnectionReceiver)
     }
-}
 
-@Composable
-fun MainContent() {
-    Column {
-        Text(text = "Power Connection Status")
+    @Composable
+    fun DisplayLogs(logs: List<LogEntry>) {
+        val lazyListState = rememberLazyListState()
+
+        LazyColumn(state = lazyListState) {
+            items(logs.reversed()) { log ->
+                Text(text = "${log.timestamp},${log.event}, Status: ${log.status}")
+            }
+        }
     }
-}
 
-@Preview
-@Composable
-fun PreviewMainContent() {
-    MainContent()
+    private fun readLogsFromJson(context: Context): List<LogEntry> {
+        val logList = mutableListOf<LogEntry>()
+        val logFile = File(context.filesDir, "logs.json")
+        if (logFile.exists()) {
+            val json = logFile.readText()
+            logList.addAll(Gson().fromJson(json, Array<LogEntry>::class.java))
+        }
+        return logList
+    }
 }

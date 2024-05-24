@@ -74,5 +74,6 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:1.0.5")
     implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.work:work-runtime-ktx:2.7.0")
+    implementation("com.google.code.gson:gson:2.8.8")
 
 }
